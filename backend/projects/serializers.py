@@ -18,12 +18,31 @@ class ProjectSerializer(serializers.ModelSerializer):
             'is_active', 'created_at', 'updated_at'
         ]
         read_only_fields = ['created_by', 'created_at', 'updated_at']
+        extra_kwargs = {
+            'members': {'required': False},
+            'is_active': {'required': False},
+        }
     
     def get_members_count(self, obj):
         return obj.members.count()
     
     def get_tasks_count(self, obj):
         return obj.tasks.count()
+    
+    def create(self, validated_data):
+        # Extract members if provided
+        members = validated_data.pop('members', [])
+        # Get created_by from validated_data (set by perform_create in view)
+        created_by = validated_data.get('created_by')
+        # Create the project
+        project = Project.objects.create(**validated_data)
+        # Add members if provided
+        if members:
+            project.members.set(members)
+        # Always add the creator as a member
+        if created_by:
+            project.members.add(created_by)
+        return project
 
 class ProjectListSerializer(serializers.ModelSerializer):
     """Simplified serializer for list views"""

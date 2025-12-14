@@ -140,7 +140,8 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
       const firstName = nameParts[0] || "";
       const lastName = nameParts.slice(1).join(" ") || "";
 
-      const response = await fetch(`http://127.0.0.1:8000/users/register/`, {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const response = await fetch(`${API_URL}/users/register/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -169,8 +170,8 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
           localStorage.setItem("user", JSON.stringify(data.user));
         }
 
-        // Redirect to home or dashboard
-        router.push("/");
+        // Redirect to dashboard
+        router.push("/projects");
       } else {
         // Handle validation errors from backend
         const backendErrors: Record<string, string> = {};
