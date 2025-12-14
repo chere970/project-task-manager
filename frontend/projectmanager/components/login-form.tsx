@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/context/auth-context";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,13 +20,12 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
-
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const router = useRouter();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -60,54 +60,13 @@ export function LoginForm({
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${API_URL}/users/login/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // Store tokens
-        if (data.tokens) {
-          localStorage.setItem("access_token", data.tokens.access);
-          localStorage.setItem("refresh_token", data.tokens.refresh);
-        }
-
-        // Store user data
-        if (data.user) {
-          localStorage.setItem("user", JSON.stringify(data.user));
-        }
-
-        // Redirect to home or dashboard
-        router.push("/");
-      } else {
-        // Handle errors from backend
-        if (data.error) {
-          setErrors({ general: data.error });
-        } else if (data.email) {
-          setErrors({
-            email: Array.isArray(data.email) ? data.email[0] : data.email,
-          });
-        } else if (data.password) {
-          setErrors({
-            password: Array.isArray(data.password)
-              ? data.password[0]
-              : data.password,
-          });
-        } else {
-          setErrors({ general: "Login failed. Please try again." });
-        }
-      }
+      await login(formData.email, formData.password);
+      // Redirect to dashboard
+      router.push("/projects");
     } catch (error) {
-      console.error("Login error:", error);
-      setErrors({ general: "An error occurred. Please try again." });
+      setErrors({
+        general: error instanceof Error ? error.message : "Login failed. Please try again.",
+      });
     } finally {
       setIsLoading(false);
     }
