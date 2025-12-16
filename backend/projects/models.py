@@ -34,3 +34,6 @@ class Project(models.Model):
 
     def __str__(self):
         return self.name
+
+
+mek, shiro      pas    tasty, past besugo

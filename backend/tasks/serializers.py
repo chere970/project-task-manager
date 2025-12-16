@@ -32,3 +32,4 @@ class TaskListSerializer(serializers.ModelSerializer):
             'priority', 'assigned_to_username', 'due_date', 'created_at'
         ]
 
+
