@@ -36,4 +36,4 @@ class Project(models.Model):
         return self.name
 
 
-mek, shiro      pas    tasty, past besugo
+# mek, shiro      pas    tasty, past besugo

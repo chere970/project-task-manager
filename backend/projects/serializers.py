@@ -24,6 +24,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         }
     
     def get_members_count(self, obj):
+        
         return obj.members.count()
     
     def get_tasks_count(self, obj):
