@@ -12,7 +12,7 @@ class Task(models.Model):
     Task / Issue inside a project.
     """
 
-    STATUS_TODO = 'TODO'
+    STATUS_TODO = ''
     STATUS_IN_PROGRESS = 'IN_PROGRESS'
     STATUS_DONE = 'DONE'
 
